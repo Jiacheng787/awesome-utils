@@ -22,28 +22,33 @@ func main() {
 	//fmt.Println(res.ToPrimitive())
 	wg := new(sync.WaitGroup)
 
-	p := promise.New(func(resolve func(interface{}), reject func(err error)) {
+	p := promise.New(func(resolve func(promise.T), reject func(error)) {
 		wg.Add(1)
 		go func() {
 			defer wg.Done()
 			time.Sleep(1 * time.Second)
-			//resolve(2333)
-			reject(fmt.Errorf("请求失败"))
+			resolve(2333)
+
+			// error 是 go 的一种内置类型，本质上是一个接口
+			// 通常有两种方式可以定制
+			// 一种是通过 errors.New()
+			// 另一种是 fmt.Errorf()
+			//reject(fmt.Errorf("请求失败"))
 		}()
 	})
 
-	p.Then(func(res interface{}) interface{} {
+	p.Then(func(res promise.T) promise.T {
 		fmt.Println("===success1", res)
 		return 666
-	}, func(err error) interface{} {
+	}, func(err error) promise.T {
 		fmt.Println("===error1", err)
-		return 0
-	}).Then(func(res interface{}) interface{} {
+		return nil
+	}).Then(func(res promise.T) promise.T {
 		fmt.Println("===success2", res)
-		return 0
-	}, func(err error) interface{} {
+		return nil
+	}, func(err error) promise.T {
 		fmt.Println("===error2", err)
-		return 0
+		return nil
 	})
 
 	// 保证所有子线程都执行完成后再退出 main 函数
