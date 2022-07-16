@@ -2,7 +2,9 @@ package promise
 
 import (
 	"fmt"
+	"sync"
 	"testing"
+	"time"
 )
 
 func TestSyncCallback(t *testing.T) {
@@ -13,7 +15,7 @@ func TestSyncCallback(t *testing.T) {
 		if res == 2333 {
 			t.Logf("sync callback success")
 		} else {
-			t.Fatalf("sync callback failed, expected 2333, got %v", res)
+			t.Fatalf("sync callback failed, expected %v, got %v", 2333, res)
 		}
 		return nil
 	}, func(err error) T {
@@ -59,7 +61,7 @@ func TestSyncMultiCallback(t *testing.T) {
 	if count == 2 {
 		t.Logf("sync multi callback success")
 	} else {
-		t.Fatalf("sync multi callback failed, expected 2, got %v", count)
+		t.Fatalf("sync multi callback failed, expected %v, got %v", 2, count)
 	}
 }
 
@@ -85,6 +87,28 @@ func TestSyncChainCallback(t *testing.T) {
 	if count == 2 {
 		t.Logf("sync chain callback success")
 	} else {
-		t.Fatalf("sync chain callback failed, expected 2, got %v", count)
+		t.Fatalf("sync chain callback failed, expected %v, got %v", 2, count)
 	}
+}
+
+func TestAsyncCallback(t *testing.T) {
+	wg := new(sync.WaitGroup)
+	p := New(func(resolve func(T), reject func(error)) {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			time.Sleep(1 * time.Second)
+			resolve(2333)
+		}()
+	})
+
+	p.Then(func(res T) T {
+		t.Logf("async callback success")
+		return nil
+	}, func(err error) T {
+		t.Fatalf("async callback failed")
+		return nil
+	})
+
+	wg.Wait()
 }
