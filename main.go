@@ -1,7 +1,7 @@
 package main
 
 import (
-	"awesome-utils/collection/promise"
+	"awesome-utils/packages/promise"
 	"fmt"
 	"sync"
 	"time"
