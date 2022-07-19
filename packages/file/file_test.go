@@ -34,9 +34,11 @@ func TestGetCwd(t *testing.T) {
 		log.Fatal(err)
 	}
 
+	// 注意两种初始化对象方式的区别：
+	// var pkg *Package 初始化一个空指针 nil
+	// &Package{} 初始化一个空对象指针，内部属性都是初始值
 	pkg := &Package{}
-	err = json.Unmarshal(content, pkg)
-	if err != nil {
+	if err := json.Unmarshal(content, pkg); err != nil {
 		log.Fatal(err)
 	}
 	log.Println(pkg)
