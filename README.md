@@ -1,6 +1,8 @@
 # awesome-utils
 
-⭐️ Golang 实现 JS 风格的 API
+⭐️ JS wheels that implements in golang
+
+Inspired by [wheel-awesome](https://github.com/su37josephxia/wheel-awesome)
 
 ## 1. Promise
 
