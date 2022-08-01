@@ -72,7 +72,7 @@ func resolvePromise(p *Promise, result T, resolve func(T), reject func(error)) {
 	// 第一种 value, ok := result.(Promise)
 	// 注意这边需要接受参数 ok
 	// 否则断言失败会直接抛出 panic
-	//if value, ok := result.(Promise); ok {
+	//if value, ok := result.(*Promise); ok {
 	//	value.Then(func(res T) T {
 	//		resolve(res)
 	//		return nil
