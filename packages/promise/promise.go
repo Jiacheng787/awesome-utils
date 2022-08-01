@@ -69,7 +69,7 @@ func resolvePromise(p *Promise, result T, resolve func(T), reject func(error)) {
 		return
 	}
 	// Golang 类型断言两种用法
-	// 第一种 value, ok := result.(Promise)
+	// 第一种 value, ok := result.(*Promise)
 	// 注意这边需要接受参数 ok
 	// 否则断言失败会直接抛出 panic
 	//if value, ok := result.(*Promise); ok {
