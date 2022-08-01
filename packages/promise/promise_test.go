@@ -112,3 +112,26 @@ func TestAsyncCallback(t *testing.T) {
 
 	wg.Wait()
 }
+
+func TestNestPromise(t *testing.T) {
+	p := New(func(resolve func(T), reject func(error)) {
+		resolve(2333)
+	})
+	p.Then(func(res T) T {
+		return New(func(resolve func(T), reject func(error)) {
+			resolve(666)
+		})
+	}, func(err error) T {
+		return nil
+	}).Then(func(res T) T {
+		if res == 666 {
+			t.Logf("nest promise success")
+		} else {
+			t.Fatalf("nest promise failed, expected %v, got %v", 666, res)
+		}
+		return nil
+	}, func(err error) T {
+		t.Fatalf("nest promise failed")
+		return nil
+	})
+}

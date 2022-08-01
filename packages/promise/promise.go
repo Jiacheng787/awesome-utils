@@ -2,7 +2,6 @@ package promise
 
 import (
 	"fmt"
-	"reflect"
 )
 
 const (
@@ -60,17 +59,21 @@ func (p *Promise) _reject(reason error) {
 	p.onRejected = p.onRejected[:0]
 }
 
-func instanceOf(a, b interface{}) bool {
-	return reflect.TypeOf(a) == reflect.TypeOf(b)
-}
+//func instanceOf(a, b interface{}) bool {
+//	return reflect.TypeOf(a) == reflect.TypeOf(b)
+//}
 
 func resolvePromise(p *Promise, result T, resolve func(T), reject func(error)) {
 	if p == result {
 		reject(fmt.Errorf("chaining cycle detected for promise #<Promise>"))
 		return
 	}
-	//if instanceOf(result, &Promise{}) {
-	//	Resolve(result).Then(func(res T) T {
+	// Golang 类型断言两种用法
+	// 第一种 value, ok := result.(Promise)
+	// 注意这边需要接受参数 ok
+	// 否则断言失败会直接抛出 panic
+	//if value, ok := result.(Promise); ok {
+	//	value.Then(func(res T) T {
 	//		resolve(res)
 	//		return nil
 	//	}, func(err error) T {
@@ -78,8 +81,22 @@ func resolvePromise(p *Promise, result T, resolve func(T), reject func(error)) {
 	//		return nil
 	//	})
 	//} else {
-	resolve(result)
+	//	resolve(result)
 	//}
+
+	// 第二种配合 switch 使用
+	switch value := result.(type) {
+	case *Promise:
+		value.Then(func(res T) T {
+			resolve(res)
+			return nil
+		}, func(err error) T {
+			reject(err)
+			return nil
+		})
+	default:
+		resolve(value)
+	}
 }
 
 func (p *Promise) Then(onFulFilled func(T) T, onRejected func(error) T) *Promise {
