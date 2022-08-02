@@ -10,9 +10,9 @@ const (
 	REJECTED
 )
 
-type T = interface{} // 空接口代表 any 类型
+type T interface{} // 空接口代表 any 类型
 
-type Executor = func(func(T), func(error))
+type Executor func(func(T), func(error))
 
 // 结构体属性名开头大写相当于 public，可以在模块外部访问
 // 属性名开头小写相当于 private，无法在模块外部访问
