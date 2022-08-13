@@ -65,6 +65,7 @@ func (p *Promise) _reject(reason error) {
 
 func resolvePromise(p *Promise, result T, resolve func(T), reject func(error)) {
 	if p == result {
+		// 构造 error 对象，也可以用 errors.New()
 		reject(fmt.Errorf("chaining cycle detected for promise #<Promise>"))
 		return
 	}
